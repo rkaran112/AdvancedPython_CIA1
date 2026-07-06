@@ -158,7 +158,7 @@ with tab3:
         
         search_state = st.text_input("Search state", placeholder="Type state name...")
         if search_state:
-            sorted_state_df = sorted_state_df[sorted_state_df['State'].str.contains(search_state, case=False)]
+            sorted_state_df = sorted_state_df[sorted_state_df['State'].str.contains(search_state, case=False, regex=False)]
         
         st.dataframe(sorted_state_df, use_container_width=True, hide_index=True)
     
