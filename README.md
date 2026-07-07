@@ -11,7 +11,7 @@ This repo bundles two separate pieces of coursework:
 A multi-tab Streamlit app ("Silver Price Calculator & Sales Dashboard", by R. Karan, RegNo 2547241, Class 3MCA-B) with four tabs:
 
 - **Price Calculator** — interactive sliders/inputs to compute the cost of a silver purchase in grams or kilograms, converted to INR/USD/EUR/GBP/AUD at hard-coded exchange rates.
-- **Historical Prices** — a line chart of silver price trends with a price-range filter and summary stats. Note: the chart is built from a synthetic date/price series generated in code, not from `historical_silver_price.csv` (that CSV exists in the repo but isn't read by the script).
+- **Historical Prices** — a line chart of silver price trends with a price-range filter and summary stats, sourced from `historical_silver_price.csv` (monthly INR/kg prices from 2000-2025), falling back to a synthetic series if the file is missing.
 - **State-wise Sales** — loads `state_wise_silver_purchased_kg.csv` (falls back to a small hard-coded dataset if the file is missing) and shows a sortable/searchable table, a top-5 bar chart, and an optional India choropleth map. The map requires the user to manually upload a GeoJSON file via the UI (it isn't auto-loaded from `india_state_geo.json`, even though that file is present in the repo) and includes state-name normalization logic plus error handling for mismatched/invalid uploads.
 - **January Trends** — a hard-coded daily dataset for January with a line chart, cumulative-purchases area chart, and weekly breakdown/growth stats.
 
@@ -57,6 +57,6 @@ The notebook (`ML_2547241_Lab1&2.ipynb`) is designed for Google Colab and expect
 
 Work in progress / rough edges, though functionally usable:
 
-- `streamlit.py` runs end-to-end and has basic error handling (missing-CSV fallback, try/except around GeoPandas import and map generation), but two data files in the repo aren't actually wired up: `historical_silver_price.csv` is unused (the "Historical Prices" tab uses synthetic generated data instead), and `india_state_geo.json` requires a manual upload rather than being loaded automatically.
+- `streamlit.py` runs end-to-end and has basic error handling (missing-CSV fallback, try/except around GeoPandas import and map generation). `historical_silver_price.csv` is now wired up in the "Historical Prices" tab; `india_state_geo.json` still requires a manual upload rather than being loaded automatically.
 - The notebook depends on external datasets (`city_day.csv`, `crop_production.csv`) that aren't included in the repo, so it can't be re-executed as-is outside the original Colab session.
 - No automated tests.

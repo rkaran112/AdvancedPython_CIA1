@@ -96,9 +96,20 @@ with tab2:
     with col_filter2:
         show_stats = st.checkbox("Show Statistics", value=True)
     
-    dates = pd.date_range(start='2023-01-01', end='2024-01-30', freq='D')
-    prices = [18000 + i*5 + (i%7)*500 for i in range(len(dates))]
-    hist = pd.DataFrame({"Date": dates, "Price_INR_per_kg": prices})
+    hist_csv_path = "historical_silver_price.csv"
+
+    if os.path.exists(hist_csv_path):
+        hist_raw = pd.read_csv(hist_csv_path)
+        hist = pd.DataFrame({
+            "Date": pd.to_datetime(hist_raw["Year"].astype(str) + "-" + hist_raw["Month"], format="%Y-%b"),
+            "Price_INR_per_kg": hist_raw["Silver_Price_INR_per_kg"]
+        })
+    else:
+        st.error(f"File not found: {hist_csv_path}")
+        st.info("Please ensure the CSV file is in the same directory as this script.")
+        dates = pd.date_range(start='2023-01-01', end='2024-01-30', freq='D')
+        prices = [18000 + i*5 + (i%7)*500 for i in range(len(dates))]
+        hist = pd.DataFrame({"Date": dates, "Price_INR_per_kg": prices})
     
     if price_filter == "Less than or equal to 20000":
         hist_filtered = hist[hist["Price_INR_per_kg"] <= 20000]
