@@ -219,7 +219,7 @@ with tab3:
                         'Andaman & Nicobar': 'Andaman and Nicobar Islands',
                         'A & N Islands': 'Andaman and Nicobar Islands',
                         'Arunanchal Pradesh': 'Arunachal Pradesh',
-                        'Chhattisgarh': 'Chattisgarh',
+                        'Chattisgarh': 'Chhattisgarh',
                         'Dadara & Nagar Haveli': 'Dadra and Nagar Haveli',
                         'Daman & Diu': 'Daman and Diu',
                         'NCT of Delhi': 'Delhi',
