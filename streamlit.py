@@ -42,8 +42,11 @@ with tab1:
     
     with col1:
         st.markdown("**Input Parameters**")
-        weight = st.slider("Weight of silver (kg)", min_value=0.0, max_value=100.0, value=1.0, step=0.1)
         unit = st.radio("Unit", ["grams", "kilograms"], horizontal=True)
+        if unit == "kilograms":
+            weight = st.slider("Weight of silver (kg)", min_value=0.0, max_value=100.0, value=1.0, step=0.1)
+        else:
+            weight = st.slider("Weight of silver (grams)", min_value=0.0, max_value=1000.0, value=100.0, step=1.0)
         price_per_gram = st.slider("Current price per gram (INR)", min_value=50.0, max_value=150.0, value=75.0, step=1.0)
     
     with col2:
