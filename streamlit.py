@@ -199,13 +199,16 @@ with tab3:
     with tab3_3:
         if HAS_GPD:
             st.markdown("**Geo Map Visualization**")
-            st.write("Upload a GeoJSON file to see the choropleth map with darker shades representing higher purchases")
-            
-            geo_file = st.file_uploader("Upload India States GeoJSON", type=["geojson", "json"], key="geo_upload")
-            
-            if geo_file:
+            st.write("Uses the bundled `india_state_geo.json` by default, with darker shades representing higher purchases. Upload your own GeoJSON to override it.")
+
+            geo_file = st.file_uploader("Upload India States GeoJSON (optional)", type=["geojson", "json"], key="geo_upload")
+
+            default_geo_path = "india_state_geo.json"
+            geo_source = geo_file if geo_file else (default_geo_path if os.path.exists(default_geo_path) else None)
+
+            if geo_source:
                 try:
-                    gdf = gpd.read_file(geo_file)
+                    gdf = gpd.read_file(geo_source)
                     
                     st.write("**Available columns in GeoJSON:**")
                     st.write(gdf.columns.tolist())
@@ -319,7 +322,7 @@ with tab3:
                     st.write("3. Try a different column from the dropdown")
                     st.write("4. Ensure the GeoJSON file is properly formatted")
             else:
-                st.info("📌 Upload a GeoJSON file of India states to see the choropleth map")
+                st.info("📌 No bundled GeoJSON found — upload a GeoJSON file of India states to see the choropleth map")
                 st.write("**Expected format:** GeoJSON file with state boundaries and a column containing state names")
         else:
             st.warning("GeoPandas not installed. Install with: pip install geopandas matplotlib")
