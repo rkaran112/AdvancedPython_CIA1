@@ -393,6 +393,8 @@ with tab4:
         ).properties(height=300).interactive()
         st.altair_chart(week_chart, use_container_width=True)
         
+        best_week = weekly_data.loc[weekly_data["Total (kg)"].idxmax()]
+
         col_growth1, col_growth2 = st.columns(2)
         col_growth1.metric("Growth (Week 1 to Week 4)", f"{week_4 - week_1:.0f} kg", delta=f"{((week_4 - week_1) / week_1 * 100):.1f}%")
-        col_growth2.metric("Best Week", "Week 4" if week_4 == max(week_1, week_2, week_3, week_4) else "Other", delta=f"{max(week_1, week_2, week_3, week_4):.0f} kg")
+        col_growth2.metric("Best Week", best_week["Week"], delta=f"{best_week['Total (kg)']:.0f} kg")
