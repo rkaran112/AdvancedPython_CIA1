@@ -78,7 +78,7 @@ with tab1:
     with st.expander("See price breakdown"):
         breakdown = pd.DataFrame({
             "Description": ["Weight", "Price per gram", "Total (INR)", f"Converted ({currency})"],
-            "Value": [f"{weight_in_grams} g", f"Rs {price_per_gram}", f"Rs {total_cost_inr:,.2f}", f"{total_cost_converted:,.2f}"]
+            "Value": [f"{weight_in_grams:,.2f} g", f"Rs {price_per_gram:,.2f}", f"Rs {total_cost_inr:,.2f}", f"{total_cost_converted:,.2f}"]
         })
         st.dataframe(breakdown, use_container_width=True, hide_index=True)
 
