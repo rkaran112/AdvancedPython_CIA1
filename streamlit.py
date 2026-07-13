@@ -10,6 +10,8 @@ try:
 except Exception:
     HAS_GPD = False
 
+from state_utils import normalize_state_names
+
 st.set_page_config(page_title="Silver Price Dashboard", layout="wide", initial_sidebar_state="expanded")
 
 st.markdown("""
@@ -215,29 +217,11 @@ with tab3:
                     
                     state_col = st.selectbox("Select State column from GeoJSON", gdf.columns.tolist())
                     
-                    # Convert both columns to string type
-                    gdf[state_col] = gdf[state_col].astype(str).str.strip()
+                    # Normalize state names on both sides so alternate/legacy
+                    # spellings in the GeoJSON line up with the CSV.
+                    gdf[state_col] = normalize_state_names(gdf[state_col])
                     state_df_copy = state_df.copy()
-                    state_df_copy['State'] = state_df_copy['State'].astype(str).str.strip()
-                    
-                    # State name normalization mapping
-                    state_mapping = {
-                        'Andaman & Nicobar': 'Andaman and Nicobar Islands',
-                        'A & N Islands': 'Andaman and Nicobar Islands',
-                        'Arunanchal Pradesh': 'Arunachal Pradesh',
-                        'Chattisgarh': 'Chhattisgarh',
-                        'Dadara & Nagar Haveli': 'Dadra and Nagar Haveli',
-                        'Daman & Diu': 'Daman and Diu',
-                        'NCT of Delhi': 'Delhi',
-                        'Jammu & Kashmir': 'Jammu and Kashmir',
-                        'Pondicherry': 'Puducherry',
-                        'Uttaranchal': 'Uttarakhand',
-                        'Orissa': 'Odisha'
-                    }
-                    
-                    # Apply normalization
-                    gdf[state_col] = gdf[state_col].replace(state_mapping)
-                    state_df_copy['State'] = state_df_copy['State'].replace(state_mapping)
+                    state_df_copy['State'] = normalize_state_names(state_df_copy['State'])
                     
                     # Show sample data for debugging
                     with st.expander("View GeoJSON state names"):
