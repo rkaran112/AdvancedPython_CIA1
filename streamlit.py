@@ -132,13 +132,16 @@ with tab2:
     ).properties(height=400, width=900).interactive()
     
     st.altair_chart(chart, use_container_width=True)
-    
+
     if show_stats:
-        col_s1, col_s2, col_s3, col_s4 = st.columns(4)
-        col_s1.metric("Max Price", f"Rs {hist_filtered['Price_INR_per_kg'].max():,.0f}")
-        col_s2.metric("Min Price", f"Rs {hist_filtered['Price_INR_per_kg'].min():,.0f}")
-        col_s3.metric("Avg Price", f"Rs {hist_filtered['Price_INR_per_kg'].mean():,.0f}")
-        col_s4.metric("Price Range", f"Rs {hist_filtered['Price_INR_per_kg'].max() - hist_filtered['Price_INR_per_kg'].min():,.0f}")
+        if hist_filtered.empty:
+            st.warning("No records match this price filter.")
+        else:
+            col_s1, col_s2, col_s3, col_s4 = st.columns(4)
+            col_s1.metric("Max Price", f"Rs {hist_filtered['Price_INR_per_kg'].max():,.0f}")
+            col_s2.metric("Min Price", f"Rs {hist_filtered['Price_INR_per_kg'].min():,.0f}")
+            col_s3.metric("Avg Price", f"Rs {hist_filtered['Price_INR_per_kg'].mean():,.0f}")
+            col_s4.metric("Price Range", f"Rs {hist_filtered['Price_INR_per_kg'].max() - hist_filtered['Price_INR_per_kg'].min():,.0f}")
 
 
 with tab3:
