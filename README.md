@@ -59,4 +59,4 @@ Work in progress / rough edges, though functionally usable:
 
 - `streamlit.py` runs end-to-end and has basic error handling (missing-CSV fallback, try/except around GeoPandas import and map generation). `historical_silver_price.csv` is wired up in the "Historical Prices" tab, and `india_state_geo.json` now auto-loads in the "State-wise Sales" map tab instead of requiring a manual upload.
 - The notebook depends on external datasets (`city_day.csv`, `crop_production.csv`) that aren't included in the repo, so it can't be re-executed as-is outside the original Colab session.
-- No automated tests.
+- `test_state_utils.py` covers the state-name normalization helper (`unittest`, run with `python -m unittest test_state_utils`). The rest of `streamlit.py` still has no automated tests.
