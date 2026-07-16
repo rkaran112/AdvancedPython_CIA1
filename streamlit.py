@@ -11,6 +11,7 @@ except Exception:
     HAS_GPD = False
 
 from state_utils import normalize_state_names
+from trend_utils import growth_percent, weekly_breakdown
 
 st.set_page_config(page_title="Silver Price Dashboard", layout="wide", initial_sidebar_state="expanded")
 
@@ -361,16 +362,11 @@ with tab4:
     with tab4_3:
         st.markdown("**Daily Statistics**")
         
-        week_1 = jan_data[jan_data['Day'] <= 7]['Silver_Purchased_kg'].sum()
-        week_2 = jan_data[(jan_data['Day'] > 7) & (jan_data['Day'] <= 14)]['Silver_Purchased_kg'].sum()
-        week_3 = jan_data[(jan_data['Day'] > 14) & (jan_data['Day'] <= 21)]['Silver_Purchased_kg'].sum()
-        week_4 = jan_data[jan_data['Day'] > 21]['Silver_Purchased_kg'].sum()
-        
+        weekly_data = weekly_breakdown(jan_data)
+        week_1 = weekly_data["Total (kg)"].iloc[0]
+        week_4 = weekly_data["Total (kg)"].iloc[-1]
+
         st.write("**Weekly Breakdown:**")
-        weekly_data = pd.DataFrame({
-            "Week": ["Week 1 (1-7)", "Week 2 (8-14)", "Week 3 (15-21)", "Week 4 (22-31)"],
-            "Total (kg)": [week_1, week_2, week_3, week_4]
-        })
         st.dataframe(weekly_data, use_container_width=True, hide_index=True)
         
         week_chart = alt.Chart(weekly_data).mark_bar(color='#667eea').encode(
@@ -382,6 +378,9 @@ with tab4:
         
         best_week = weekly_data.loc[weekly_data["Total (kg)"].idxmax()]
 
+        growth_pct = growth_percent(week_1, week_4)
+        growth_delta = f"{growth_pct:.1f}%" if growth_pct is not None else "N/A"
+
         col_growth1, col_growth2 = st.columns(2)
-        col_growth1.metric("Growth (Week 1 to Week 4)", f"{week_4 - week_1:.0f} kg", delta=f"{((week_4 - week_1) / week_1 * 100):.1f}%")
+        col_growth1.metric("Growth (Week 1 to Week 4)", f"{week_4 - week_1:.0f} kg", delta=growth_delta)
         col_growth2.metric("Best Week", best_week["Week"], delta=f"{best_week['Total (kg)']:.0f} kg")
