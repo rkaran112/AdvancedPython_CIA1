@@ -20,6 +20,18 @@ class TestWeeklyBreakdown(unittest.TestCase):
         result = weekly_breakdown(df)
         self.assertEqual(result["Week"].iloc[-1], "Week 4 (22-28)")
 
+    def test_data_ending_at_or_before_day_21_does_not_crash(self):
+        # Regression guard: fixed bin edges [0, 7, 14, 21, last_day] used to
+        # produce duplicate/non-monotonic edges (e.g. 21, 21) whenever the
+        # data didn't extend past day 21, raising a ValueError from pd.cut.
+        df = pd.DataFrame({"Day": range(1, 22), "Silver_Purchased_kg": [10] * 21})
+        result = weekly_breakdown(df)
+        self.assertEqual(
+            list(result["Week"]),
+            ["Week 1 (1-7)", "Week 2 (8-14)", "Week 3 (15-21)"],
+        )
+        self.assertEqual(list(result["Total (kg)"]), [70, 70, 70])
+
 
 class TestGrowthPercent(unittest.TestCase):
     def test_computes_percent_change(self):
