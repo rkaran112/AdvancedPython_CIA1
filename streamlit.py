@@ -10,6 +10,7 @@ try:
 except Exception:
     HAS_GPD = False
 
+from price_utils import PRICE_FILTER_OPTIONS, filter_by_price_range
 from state_utils import normalize_state_names
 from trend_utils import growth_percent, weekly_breakdown
 
@@ -95,7 +96,7 @@ with tab2:
     with col_filter1:
         price_filter = st.selectbox(
             "Filter by price range (INR/kg)",
-            ["All", "Less than or equal to 20000", "Between 20000 and 30000", "Greater than or equal to 30000"],
+            PRICE_FILTER_OPTIONS,
             key="price_filter"
         )
     
@@ -117,14 +118,7 @@ with tab2:
         prices = [18000 + i*5 + (i%7)*500 for i in range(len(dates))]
         hist = pd.DataFrame({"Date": dates, "Price_INR_per_kg": prices})
     
-    if price_filter == "Less than or equal to 20000":
-        hist_filtered = hist[hist["Price_INR_per_kg"] <= 20000]
-    elif price_filter == "Between 20000 and 30000":
-        hist_filtered = hist[(hist["Price_INR_per_kg"] > 20000) & (hist["Price_INR_per_kg"] < 30000)]
-    elif price_filter == "Greater than or equal to 30000":
-        hist_filtered = hist[hist["Price_INR_per_kg"] >= 30000]
-    else:
-        hist_filtered = hist
+    hist_filtered = filter_by_price_range(hist, price_filter)
     
     chart = alt.Chart(hist_filtered).mark_line(point=True, color='#FF6B6B', size=3).encode(
         x=alt.X("Date:T", title="Date"),
