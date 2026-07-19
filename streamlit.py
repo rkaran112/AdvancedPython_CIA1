@@ -10,6 +10,7 @@ try:
 except Exception:
     HAS_GPD = False
 
+from calculator_utils import CURRENCY_RATES, convert_currency, weight_to_grams
 from price_utils import PRICE_FILTER_OPTIONS, filter_by_price_range
 from state_utils import normalize_state_names
 from trend_utils import growth_percent, weekly_breakdown
@@ -56,19 +57,11 @@ with tab1:
     with col2:
         st.markdown("**Currency Conversion**")
         currency = st.selectbox("Convert to", ["INR", "USD", "EUR", "GBP", "AUD"])
-        
-        currency_rates = {
-            "INR": 1.0,
-            "USD": 0.012,
-            "EUR": 0.011,
-            "GBP": 0.0095,
-            "AUD": 0.018
-        }
-        fx_rate = currency_rates.get(currency, 1.0)
-    
-    weight_in_grams = weight * 1000 if unit == "kilograms" else weight
+        fx_rate = CURRENCY_RATES.get(currency, 1.0)
+
+    weight_in_grams = weight_to_grams(weight, unit)
     total_cost_inr = weight_in_grams * price_per_gram
-    total_cost_converted = total_cost_inr * fx_rate
+    total_cost_converted = convert_currency(total_cost_inr, currency)
     
     st.divider()
     
