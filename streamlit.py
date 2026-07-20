@@ -231,7 +231,24 @@ with tab3:
                     
                     if matched == 0:
                         st.warning("No states matched! Please check state names in both files.")
-                    
+
+                    # States present in the sales data but absent from the GeoJSON
+                    # entirely (e.g. Telangana/Ladakh aren't in the bundled map,
+                    # which predates their formation) have no polygon to draw on
+                    # and won't show up as "No data" grey either — they're just
+                    # missing from the map. Call that out explicitly so it isn't
+                    # mistaken for a data problem.
+                    states_without_boundary = sorted(
+                        set(state_df_copy['State']) - set(merged['State'].dropna())
+                    )
+                    if states_without_boundary:
+                        st.info(
+                            "The following states have sales data but no matching "
+                            f"boundary in this GeoJSON, so they won't appear on the map "
+                            f"at all (they do show up in the Data Table and Top 5 Chart tabs): "
+                            f"{', '.join(states_without_boundary)}"
+                        )
+
                     # Create the map
                     fig, ax = plt.subplots(figsize=(16, 12))
                     
