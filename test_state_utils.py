@@ -2,7 +2,7 @@ import unittest
 
 import pandas as pd
 
-from state_utils import STATE_NAME_MAP, normalize_state_names
+from state_utils import STATE_NAME_MAP, normalize_state_names, summarize_purchases
 
 
 class TestNormalizeStateNames(unittest.TestCase):
@@ -31,6 +31,35 @@ class TestNormalizeStateNames(unittest.TestCase):
     def test_returns_a_series(self):
         result = normalize_state_names(pd.Series(["Orissa"]))
         self.assertIsInstance(result, pd.Series)
+
+
+class TestSummarizePurchases(unittest.TestCase):
+    def setUp(self):
+        self.df = pd.DataFrame({
+            "State": ["Rajasthan", "Gujarat", "Bihar"],
+            "Silver_Purchased_kg": [2500, 2200, 700],
+        })
+
+    def test_computes_total_and_average(self):
+        summary = summarize_purchases(self.df)
+        self.assertEqual(summary["total"], 5400)
+        self.assertAlmostEqual(summary["average"], 1800)
+
+    def test_identifies_top_and_bottom_states(self):
+        summary = summarize_purchases(self.df)
+        self.assertEqual(summary["top_name"], "Rajasthan")
+        self.assertEqual(summary["top_value"], 2500)
+        self.assertEqual(summary["bottom_name"], "Bihar")
+        self.assertEqual(summary["bottom_value"], 700)
+
+    def test_computes_difference_between_top_and_bottom(self):
+        summary = summarize_purchases(self.df)
+        self.assertEqual(summary["difference"], 1800)
+
+    def test_single_row_has_zero_difference(self):
+        summary = summarize_purchases(pd.DataFrame({"State": ["Goa"], "Silver_Purchased_kg": [1600]}))
+        self.assertEqual(summary["top_name"], summary["bottom_name"])
+        self.assertEqual(summary["difference"], 0)
 
 
 if __name__ == "__main__":

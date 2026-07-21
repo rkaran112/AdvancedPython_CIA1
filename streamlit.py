@@ -12,7 +12,7 @@ except Exception:
 
 from calculator_utils import CURRENCY_RATES, convert_currency, weight_to_grams
 from price_utils import PRICE_FILTER_OPTIONS, filter_by_price_range
-from state_utils import normalize_state_names
+from state_utils import normalize_state_names, summarize_purchases
 from trend_utils import growth_percent, weekly_breakdown
 
 st.set_page_config(page_title="Silver Price Dashboard", layout="wide", initial_sidebar_state="expanded")
@@ -150,10 +150,12 @@ with tab3:
             "Silver_Purchased_kg": [2500, 2200, 1800, 1600, 1400, 1200, 1100, 950, 850, 700]
         })
     
+    purchases_summary = summarize_purchases(state_df)
+
     col_info1, col_info2, col_info3 = st.columns(3)
-    col_info1.metric("Total Purchases", f"{state_df['Silver_Purchased_kg'].sum():,.0f} kg", delta="All states")
-    col_info2.metric("Top State", state_df.sort_values('Silver_Purchased_kg', ascending=False).iloc[0]['State'], delta="Highest")
-    col_info3.metric("Avg per State", f"{state_df['Silver_Purchased_kg'].mean():,.0f} kg", delta="Average")
+    col_info1.metric("Total Purchases", f"{purchases_summary['total']:,.0f} kg", delta="All states")
+    col_info2.metric("Top State", purchases_summary['top_name'], delta="Highest")
+    col_info3.metric("Avg per State", f"{purchases_summary['average']:,.0f} kg", delta="Average")
     
     st.divider()
 
@@ -181,13 +183,10 @@ with tab3:
         st.altair_chart(bar, use_container_width=True)
         
         st.markdown("**Key Insights**")
-        top_state = state_df.loc[state_df['Silver_Purchased_kg'].idxmax()]
-        bottom_state = state_df.loc[state_df['Silver_Purchased_kg'].idxmin()]
-        
         insight_col1, insight_col2, insight_col3 = st.columns(3)
-        insight_col1.success(f"Highest: {top_state['State']}\n{top_state['Silver_Purchased_kg']:.0f} kg")
-        insight_col2.warning(f"Lowest: {bottom_state['State']}\n{bottom_state['Silver_Purchased_kg']:.0f} kg")
-        insight_col3.info(f"Difference:\n{top_state['Silver_Purchased_kg'] - bottom_state['Silver_Purchased_kg']:.0f} kg")
+        insight_col1.success(f"Highest: {purchases_summary['top_name']}\n{purchases_summary['top_value']:.0f} kg")
+        insight_col2.warning(f"Lowest: {purchases_summary['bottom_name']}\n{purchases_summary['bottom_value']:.0f} kg")
+        insight_col3.info(f"Difference:\n{purchases_summary['difference']:.0f} kg")
     
     with tab3_3:
         if HAS_GPD:
