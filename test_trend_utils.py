@@ -37,6 +37,9 @@ class TestGrowthPercent(unittest.TestCase):
     def test_computes_percent_change(self):
         self.assertAlmostEqual(growth_percent(100, 150), 50.0)
 
+    def test_computes_negative_percent_change_on_decline(self):
+        self.assertAlmostEqual(growth_percent(200, 100), -50.0)
+
     def test_returns_none_when_start_is_zero(self):
         self.assertIsNone(growth_percent(0, 50))
 
