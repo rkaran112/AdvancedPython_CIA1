@@ -11,7 +11,7 @@ except Exception:
     HAS_GPD = False
 
 from calculator_utils import CURRENCY_RATES, convert_currency, weight_to_grams
-from price_utils import PRICE_FILTER_OPTIONS, filter_by_price_range
+from price_utils import PRICE_FILTER_OPTIONS, filter_by_price_range, parse_historical_prices
 from state_utils import normalize_state_names, summarize_purchases
 from trend_utils import growth_percent, weekly_breakdown
 
@@ -100,10 +100,7 @@ with tab2:
 
     if os.path.exists(hist_csv_path):
         hist_raw = pd.read_csv(hist_csv_path)
-        hist = pd.DataFrame({
-            "Date": pd.to_datetime(hist_raw["Year"].astype(str) + "-" + hist_raw["Month"], format="%Y-%b"),
-            "Price_INR_per_kg": hist_raw["Silver_Price_INR_per_kg"]
-        })
+        hist = parse_historical_prices(hist_raw)
     else:
         st.error(f"File not found: {hist_csv_path}")
         st.info("Please ensure the CSV file is in the same directory as this script.")

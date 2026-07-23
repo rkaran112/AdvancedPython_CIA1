@@ -2,7 +2,29 @@ import unittest
 
 import pandas as pd
 
-from price_utils import filter_by_price_range
+from price_utils import filter_by_price_range, parse_historical_prices
+
+
+class TestParseHistoricalPrices(unittest.TestCase):
+    def test_builds_date_from_year_and_month(self):
+        hist_raw = pd.DataFrame({
+            "Year": [2000, 2000, 2001],
+            "Month": ["Jan", "Feb", "Jan"],
+            "Silver_Price_INR_per_kg": [8030, 8075, 8500],
+        })
+        result = parse_historical_prices(hist_raw)
+        self.assertEqual(
+            list(result["Date"]),
+            [pd.Timestamp("2000-01-01"), pd.Timestamp("2000-02-01"), pd.Timestamp("2001-01-01")],
+        )
+        self.assertEqual(list(result["Price_INR_per_kg"]), [8030, 8075, 8500])
+
+    def test_output_has_only_date_and_price_columns(self):
+        hist_raw = pd.DataFrame({
+            "Year": [2000], "Month": ["Jan"], "Silver_Price_INR_per_kg": [8030],
+        })
+        result = parse_historical_prices(hist_raw)
+        self.assertEqual(list(result.columns), ["Date", "Price_INR_per_kg"])
 
 
 class TestFilterByPriceRange(unittest.TestCase):
